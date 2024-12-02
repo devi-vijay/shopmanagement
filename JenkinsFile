@@ -1,0 +1,70 @@
+pipeline {
+    agent any  // Define the agent to run the pipeline on. Can use 'any' to run on any available agent.
+
+    environment {
+        // Define environment variables for the Git repository URL and branch
+        GIT_REPO_URL = 'https://github.com/devivijay123/ShopmanagementSystem-Backend.git'
+        GIT_BRANCH = 'main'  // Replace with your branch, e.g., 'main' or 'develop'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the code from the Git repository
+                git branch: "{main}", url: "${https://github.com/devivijay123/ShopmanagementSystem-Backend.git}"
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                // Install dependencies using npm (Node.js package manager)
+                script {
+                    sh 'npm install'  // Installs dependencies listed in package.json
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                // Run tests (assuming you're using a testing framework like Mocha, Jest, etc.)
+                script {
+                    sh 'npm test'  // Runs the tests specified in package.json
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                // (Optional) You may want to run a build step if your Node.js app needs one (e.g., transpiling, bundling)
+                script {
+                    sh 'npm run build'  // Run the build command (if applicable, defined in package.json)
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                // (Optional) Deploy the app (you can configure a deployment script here)
+                script {
+                    echo 'Deploying application...'
+                    // Example: Deploy using a custom script or cloud service (AWS, Heroku, etc.)
+                    // sh 'npm run deploy'
+                }
+            }
+        }
+    }
+
+    post {
+        // Actions that are executed after the pipeline runs
+        always {
+            echo 'Cleaning up after the build'
+            // Cleanup actions like archiving logs, storing test results, etc.
+        }
+        success {
+            echo 'Build and tests passed successfully!'
+        }
+        failure {
+            echo 'Build or tests failed.'
+        }
+    }
+}
